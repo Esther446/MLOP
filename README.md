@@ -97,9 +97,12 @@ MLOP/
 ├── requirements.txt
 ├── locustfile.py
 ├── README.md
+├── FlowerVision_Image_Classification.ipynb
+├── test_flower.jpg
 │
 ├── models/
 │   ├── class_names.json
+│   ├── flower_vision_final.keras
 │   └── flower_vision_final.onnx
 │
 ├── frontend/
