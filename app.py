@@ -9,7 +9,7 @@ import numpy as np
 import onnxruntime as ort
 from PIL import Image, UnidentifiedImageError
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Header
 from supabase import create_client
 
 
@@ -30,6 +30,7 @@ BUCKET_NAME = "flower-images"
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY")
 
+UPLOAD_TOKEN = os.getenv("FLOWERVISION_UPLOAD_TOKEN")
 
 def get_supabase():
     if not SUPABASE_URL or not SUPABASE_SECRET_KEY:
@@ -144,8 +145,14 @@ async def predict(file: UploadFile = File(...)):
 @app.post("/upload-training-image")
 async def upload_training_image(
     file: UploadFile = File(...),
-    flower_label: str = Form(...)
+    flower_label: str = Form(...),
+    upload_token: str = Header(None, alias="X-Upload-Token")
 ):
+    if not UPLOAD_TOKEN or upload_token != UPLOAD_TOKEN:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized upload request."
+        )
 
     if flower_label not in CLASS_NAMES:
         raise HTTPException(

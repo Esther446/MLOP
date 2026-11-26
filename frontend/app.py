@@ -363,3 +363,116 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
+
+
+# --------------------------------------------------
+# CONTRIBUTE TRAINING IMAGES
+# --------------------------------------------------
+
+st.divider()
+
+st.markdown("""
+<div style="text-align:center;padding:1rem 0;">
+    <div class="section-label">03 — Help FlowerVision grow</div>
+    <h2>Contribute Training Images 🌱</h2>
+    <p style="color:#85747A;">
+        Help improve flower recognition by contributing labelled
+        flower photographs to our training dataset.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+FLOWER_CLASSES = [
+    "daisy",
+    "dandelion",
+    "roses",
+    "sunflowers",
+    "tulips"
+]
+
+with st.container(border=True):
+    st.markdown("### Upload a flower photograph")
+
+    training_file = st.file_uploader(
+        "Choose a labelled flower image",
+        type=["jpg", "jpeg", "png"],
+        key="training_image_uploader",
+        help="Upload a clear JPG or PNG image, up to 10 MB."
+    )
+
+    training_label = st.selectbox(
+        "What flower is shown in this image?",
+        FLOWER_CLASSES,
+        format_func=lambda name: (
+            FLOWER_EMOJIS.get(name, "🌸") + " " + name.title()
+        ),
+        key="training_flower_label"
+    )
+
+    if training_file:
+        st.image(
+            training_file,
+            caption=f"Selected flower: {training_label.title()}",
+            use_container_width=True
+        )
+
+        if st.button(
+            "🌸 Submit training image",
+            use_container_width=True,
+            key="submit_training_image"
+        ):
+            try:
+                upload_token = st.secrets["FLOWERVISION_UPLOAD_TOKEN"]
+
+                with st.spinner("Uploading your image securely..."):
+                    response = requests.post(
+                        "https://flower-vision-api-sm13.onrender.com/upload-training-image",
+                        headers={
+                            "X-Upload-Token": upload_token
+                        },
+                        files={
+                            "file": (
+                                training_file.name,
+                                training_file.getvalue(),
+                                training_file.type
+                            )
+                        },
+                        data={
+                            "flower_label": training_label
+                        },
+                        timeout=180
+                    )
+
+                if response.status_code == 200:
+                    st.success(
+                        f"Successfully contributed a "
+                        f"{training_label} image! 🌸"
+                    )
+                    st.json(response.json())
+                    st.caption(
+                        "Your image is safely stored and awaiting "
+                        "preprocessing and retraining."
+                    )
+
+                elif response.status_code == 401:
+                    st.error(
+                        "Upload authorization failed. "
+                        "Please check the app's upload configuration."
+                    )
+
+                else:
+                    st.error(
+                        f"Upload failed ({response.status_code}): "
+                        f"{response.text}"
+                    )
+
+            except KeyError:
+                st.error(
+                    "Upload token is missing from Streamlit secrets."
+                )
+
+            except requests.exceptions.RequestException as error:
+                st.error(f"Could not connect to the API: {error}")
+
+            except Exception as error:
+                st.error(f"Something went wrong: {error}")
