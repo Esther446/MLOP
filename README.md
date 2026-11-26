@@ -10,6 +10,7 @@ The application allows users to upload a flower image and receive a predicted fl
 - **Streamlit Web App:** https://flowervision-alu.streamlit.app/ 
 - **FastAPI Backend:** https://flower-vision-api-sm13.onrender.com
 - **API Documentation:** https://flower-vision-api-sm13.onrender.com/docs
+-  **Drive folder:** https://drive.google.com/drive/folders/1bjaca_6I-y1WYcFnH3yggFCXRDTda3_5?usp=sharing
 -  **Demo video:** https://www.loom.com/share/81c371562bea461e9d3e2973801732c3 
 
 ## Supported Flower Categories
