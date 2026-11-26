@@ -318,11 +318,3 @@ The API successfully handled all requests during this test, with no recorded fai
 The test was conducted locally against the Dockerized API. These results represent the tested workload and are not a benchmark of the publicly hosted service under heavy traffic.
 
 Detailed test exports are available in `results/load_test/`.
-
-## Future Improvements
-
-- Expand the training dataset with more user-contributed flower images.
-- Explore additional fine-tuning strategies and hyperparameter configurations to improve model performance.
-- Expand the dataset to support additional flower categories.
-- Evaluate performance under larger concurrent workloads.
-- Improve model generalization to images outside the supported categories.
